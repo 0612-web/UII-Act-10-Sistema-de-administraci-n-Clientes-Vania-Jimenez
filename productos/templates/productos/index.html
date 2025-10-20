@@ -1,0 +1,109 @@
+{% extends "productos/base.html" %}
+
+{% block body %}
+<h3 class="m-4 text-center">Todos los Productos</h3>
+
+{% if productos %}
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-light mb-4">
+            <div class="card-header">
+                <i class="fa-solid fa-list"></i> Lista de Productos
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Id_producto</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Detalle</th>
+                            <th>Id_categoria</th>
+                            <th>Id_proveedor</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <tr>
+                            <td>{{ producto.id_producto }}</td>
+                            <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.precio }}</td>
+                            <td>{{ producto.detalle }}</td>
+                            <td>{{ producto.id_categoria }}</td>
+                            <td>{{ producto.id_proveedor }}</td>
+                            <td>
+                                <!-- Botón de información -->
+                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ producto.id_producto }}">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </button>
+
+                                <!-- Modal de información -->
+                                <div class="modal fade" id="modal{{ producto.id_producto }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">{{ producto.nombre }} - ${{ producto.precio }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul class="list-unstyled">
+                                                    <li><strong>Id_producto:</strong> {{ producto.id_producto }}</li>
+                                                    <li><strong>Nombre:</strong> {{ producto.nombre }}</li>
+                                                    <li><strong>Precio:</strong> {{ producto.precio }}</li>
+                                                    <li><strong>Detalle:</strong> {{ producto.detalle }}</li>
+                                                    <li><strong>Id_categoria:</strong> {{ producto.id_categoria }}</li>
+                                                    <li><strong>Id_proveedor:</strong> {{ producto.id_proveedor }}</li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botón Editar -->
+                                <a class="btn btn-warning me-1" href="{% url 'edit' producto.id_producto %}">
+                                    <i class="fa-solid fa-pen fa-lg"></i>
+                                </a>
+
+                                <!-- Botón Eliminar -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#borrar{{ producto.id_producto }}">
+                                    <i class="fa-solid fa-trash fa-lg"></i>
+                                </button>
+
+                                <!-- Modal Confirmación de Eliminación -->
+                                <div class="modal fade" id="borrar{{ producto.id_producto }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title">Confirmar eliminación</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de que deseas eliminar el producto <strong>{{ producto.nombre }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form method="POST" action="{% url 'borrar' producto.id_producto %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-warning text-center">No hay productos registrados.</div>
+{% endif %}
+{% endblock %}
